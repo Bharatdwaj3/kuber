@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: health-api                 # ← your desired name
+spec:
+  replicas: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: health-api               # ← MUST match label below
+  template:
+    metadata:
+      labels:
+        app: health-api             # ← label pods get
+    spec:
+      containers:
+        - name: health-api
+          image: backend:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 4000
+          env:
+            - name: PORT
+              value: "4000"
+            - name: NODE_ENV
+              value: "production"
+            # ← add all your other env vars here (MONGO_URI, JWT_*, etc.)
+          lifecycle:
+            preStop:
+              exec:
+                command: ["sleep", "10"]   # prevents sigkill during rollout
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+            limits:
+              memory: "1Gi"
+              cpu: "1000m"
