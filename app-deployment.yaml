@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: health-api                 # ← your desired name
+  name: health-api                 
 spec:
   replicas: 3
   strategy:
